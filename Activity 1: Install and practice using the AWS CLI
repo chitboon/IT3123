@@ -1,0 +1,19 @@
+You will likely want to run the aws iam get-policy command, but to run that, you need to know the Amazon Resource Name (ARN) of the policy (or the policy-arn).
+
+The following command will show policies that are defined locally (it filters out all the default AWS managed policies, which makes it easier to find the policy that they are looking for):
+
+$ aws iam list-policies --scope Local
+
+The result of the list-policies command in the previous item provides the ARN that they need to run this command (where <accountnum> is the actual account number):
+
+$ aws iam get-policy --policy-arn arn:aws:iam::<accountnum>:policy/lab_policy
+
+The command in the previous item returns details about the policy, but not the actual policy itself. You might notice that the last command showed that the policy has a version.
+
+The following command will return the desired result (where <accountnum> is the actual account number):
+
+$ aws iam get-policy-version --policy-arn arn:aws:iam::<accountnum>:policy/lab_policy --version-id v1
+
+You can pipe the output to a file to save the document so you can submit it to us. For example:
+
+$ aws iam get-policy-version --policy-arn arn:aws:iam::<accountnum>:policy/lab_policy -- version-id v1 > lab_policy.json
