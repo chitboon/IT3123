@@ -1,1 +1,31 @@
-wget https://s3.ap-southeast1.amazonaws.com/nypcloud/salesAnalysisReport.zip
+wget https://s3.ap-southeast-1.amazonaws.com/nypcloud/salesAnalysisReport.zip
+
+# lambda function to create snapshot
+
+
+import json
+import boto3
+
+def lambda_handler(event, context):
+    ec2 = boto3.resource('ec2', region_name='us-east-1')
+    VOLUME_ID = 'vol-07a4053124592d89f'  # hard coded volume id
+    snapshot = ec2.create_snapshot(
+        VolumeId=VOLUME_ID,
+        TagSpecifications=[
+            {
+                'ResourceType': 'snapshot',
+                'Tags': [
+                    {
+                        'Key': 'Name',
+                        'Value': 'created by lambda'
+                    },
+                ]
+            },
+        ]
+    )
+
+    print(f'Snapshot {snapshot.id} created for volume {VOLUME_ID}')
+    return {
+        'statusCode': 200,
+        'body': json.dumps(VOLUME_ID)
+    }
